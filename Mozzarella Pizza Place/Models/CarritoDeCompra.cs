@@ -5,5 +5,6 @@
         public Cliente Cliente { get; set; } = new Cliente();
         public List<int> Ordenes { get; set; } = new List<int>();
         public bool EstaPago { get; set; }
+        public void AgregarALasOrdenes(int pizzaId) => Ordenes.Add(pizzaId);
     }
 }
