@@ -8,7 +8,15 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Remove="wwwroot\Picante.png" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Folder Include="Data\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="wwwroot\Picante.png" />
   </ItemGroup>
 
 </Project>

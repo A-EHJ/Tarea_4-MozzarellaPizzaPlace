@@ -1,7 +1,62 @@
-﻿@page "/"
+﻿
+@page "/"
 
-<PageTitle>Index</PageTitle>
+<PageTitle>Menu Mozzarella Pizzeria</PageTitle>
 
-<h1>Hello, world!</h1>
+<!-- Menu -->
+<h1 class="text-center">Menu Mozzarella Pizza Place</h1>
+<hr />
+@foreach (var pizza in Estado.Menu.Pizzas)
+{
+    <div class="row">
+        <div class="col">
+            @pizza.Nombre
+        </div>
+        <div class="col text-right">
+            @($"{pizza.Price:0.00}")
+        </div>
+        <div class="col"></div>
+        <div class="col">
+            <img src="@ImagenPicante(pizza.nivelPicante)"
+                 alt="@pizza.nivelPicante" />
+        </div>
+        <div class="col">
+            <button class="btn btn-success pl-4 pr-4"
+            @onclick="@(() => AñadirAlCarrito(pizza))">
+                Add
+            </button>
+        </div>
+    </div>
+    <br />
+    <br />
+    
+}
+<hr />
+<div class="row">
+    <div class="col"></div>
+    <div class="col"><hr /></div>
+    <div class="col"> </div>
+    <div class="col"> </div>
+</div>
+<div class="row">
+    <div class="col"> Total:</div>
+    <div class="col text-right font-weight-bold"> @($"{Estado.PrecioTotal:0.00}") </div>
+    <div class="col"> </div>
+    <div class="col"> </div>
+    <div class="col"> </div>
+</div>
 
-Welcome to your new app.
+@code 
+{
+    private Estado Estado { get; } = new Estado();
+    protected override void OnInitialized()
+    {
+        Estado.Menu.Agregar(new Pizzas(1, "Pepperoni", 8.99M, Pizzas.NivelPicante.Picante));
+        Estado.Menu.Agregar(new Pizzas(2, "Margarita", 7.99M, Pizzas.NivelPicante.Ninguno));
+        Estado.Menu.Agregar(new Pizzas(3, "Diabolo", 9.99M, Pizzas.NivelPicante.MuyPicante));
+        Estado.Menu.Agregar(new Pizzas(4, "4 Quesos", 9.99M, Pizzas.NivelPicante.Ninguno));
+    }
+    
+    private string ImagenPicante(Pizzas.NivelPicante NivelPicante) => $"/{NivelPicante.ToString().ToLower()}.png";
+    private void AñadirAlCarrito(Pizzas pizza) => Estado.CarritoDeCompra.AgregarALasOrdenes(pizza.PizzaId);
+}   
