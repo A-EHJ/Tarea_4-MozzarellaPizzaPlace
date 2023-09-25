@@ -13,13 +13,13 @@
         {
             PizzaId = id;
             Nombre = nombre;
-            Price = price;
+            Precio = price;
             this.nivelPicante = nivelPicante;
         }
 
         public int PizzaId { get; set; }
         public string Nombre { get; set; }
-        public decimal Price { get; set; }
+        public decimal Precio { get; set; }
         public NivelPicante nivelPicante { get; set; }
     }
 }
