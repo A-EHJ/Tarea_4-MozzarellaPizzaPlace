@@ -6,7 +6,7 @@ namespace Mozzarella_Pizza_Place.Models
     {
 
         [Required(ErrorMessage = "El nombre es obligatorio.")]
-        [RegularExpression(@"^[A-Za-z\s]+$", ErrorMessage = "El nombre solo debe contener letras y espacios.
+        [RegularExpression(@"^[A-Za-z\s]+$", ErrorMessage = "El nombre solo debe contener letras y espacios.")]
         public string Nombre { get; set; }
 
         [Required(ErrorMessage = "La dirección es obligatoria.")]
