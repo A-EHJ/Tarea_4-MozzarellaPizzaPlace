@@ -1,11 +1,21 @@
-﻿
-@page "/"
+﻿@page "/"
 
 <PageTitle>Menu Mozzarella Pizzeria</PageTitle>
 
 <!-- Menu -->
-<h1 class="text-center">Menu Mozzarella Pizza Place</h1>
+<img class="img-fluid mx-auto d-block" src="LogoMozzarella.png" alt="Menu Mozzarella Pizza Place" />
+
+<br />
+
+ <div class="row">
+        <div class="col"> Nombre </div>
+        <div class="col"> Precio </div>
+        <div class="col"></div>
+        <div class="col"> Nivel del Picante </div>
+        <div class="col"></div>
+</div>
 <hr />
+
 @foreach (var pizza in Estado.Menu.Pizzas)
 {
     <div class="row">
@@ -13,7 +23,7 @@
             @pizza.Nombre
         </div>
         <div class="col text-right">
-            @($"{pizza.Price:0.00}")
+            @($"{pizza.Precio:0.00}")
         </div>
         <div class="col"></div>
         <div class="col">
@@ -31,32 +41,116 @@
     <br />
     
 }
-<hr />
-<div class="row">
-    <div class="col"></div>
-    <div class="col"><hr /></div>
-    <div class="col"> </div>
-    <div class="col"> </div>
-</div>
-<div class="row">
-    <div class="col"> Total:</div>
-    <div class="col text-right font-weight-bold"> @($"{Estado.PrecioTotal:0.00}") </div>
-    <div class="col"> </div>
-    <div class="col"> </div>
-    <div class="col"> </div>
-</div>
+
+@if (Estado.CarritoDeCompra.Ordenes.Any())
+{
+    <hr />
+    <h1 class="text-center">Tu orden actual</h1>
+    @foreach (var (pizza, pos) in (Estado.CarritoDeCompra.Ordenes.Select((id, pos) => (Estado.Menu.GetPizza(id), pos))))
+    {
+        <div class="row mb-2">
+            <div class="col">
+                @pizza.Nombre
+            </div>
+            <div class="col text-right">
+                @($"{pizza.Precio:0.00}")
+            </div>
+            <div class="col"></div>
+            <div class="col"></div>
+            <div class="col">
+                <button class="btn btn-danger"
+                @onclick="@(() => QuitarDelCarrito(pos))">Remove</button>
+            </div>
+        </div>
+    }
+
+    <div class="row">
+        <div class="col"><hr /></div>
+        <div class="col"></div>
+        <div class="col"> </div>
+        <div class="col"> </div>
+    </div>
+    <div class="row">
+        <div class="col"> Total:</div>
+        <div class="col text-right font-weight-bold"> @($"{Estado.PrecioTotal:0.00}") </div>
+        <div class="col"> </div>
+        <div class="col"> </div>
+        <div class="col"> </div>
+    </div>
+
+    <br />
+    <EditForm Model="Estado.CarritoDeCompra.Cliente" OnValidSubmit="Ordenar">
+        <DataAnnotationsValidator />
+
+        <div class="container">
+            <div class="card shadow-lg">
+                <div class="card-header">
+                    <h3 class="text-center">Registre su Información</h3>
+                </div>
+                <div class="card-body">
+                    <div class="row justify-content-center">
+                        <div class="col-xs-12 col-sm-12 col-md-8 col-lg-6 col-xl-4">
+                            <div class="mb-3">
+                                <label class="form-label">Nombre:</label>
+                                <InputText @bind-Value="Estado.CarritoDeCompra.Cliente.Nombre" class="form-control" />
+                                <ValidationMessage For="@(() => Estado.CarritoDeCompra.Cliente.Nombre)" />
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">Dirección:</label>
+                                <InputTextArea @bind-Value="Estado.CarritoDeCompra.Cliente.Direccion" class="form-control" />
+                                <ValidationMessage For="@(() => Estado.CarritoDeCompra.Cliente.Direccion)" />
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">Ciudad</label>
+                                <InputText @bind-Value="Estado.CarritoDeCompra.Cliente.Ciudad" class="form-control" />
+                                <ValidationMessage For="@(() => Estado.CarritoDeCompra.Cliente.Ciudad)" />
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">Email:</label>
+                                <InputText @bind-Value="Estado.CarritoDeCompra.Cliente.Email" class="form-control" />
+                                <ValidationMessage For="@(() => Estado.CarritoDeCompra.Cliente.Email)" />
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">Numero Tarjeta:</label>
+                                <InputText @bind-Value="Estado.CarritoDeCompra.Cliente.NumeroTarjeta" class="form-control" />
+                                <ValidationMessage For="@(() => Estado.CarritoDeCompra.Cliente.NumeroTarjeta)" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-footer d-flex justify-content-center">
+                <div class="btn-group">
+                    <button type="submit" class="btn btn-success">Ordenar</button>
+                </div>
+            </div>
+        </div>
+    </EditForm>
+
+
+}
+
+@Estado.ToJson()
 
 @code 
 {
     private Estado Estado { get; } = new Estado();
+
     protected override void OnInitialized()
     {
         Estado.Menu.Agregar(new Pizzas(1, "Pepperoni", 8.99M, Pizzas.NivelPicante.Picante));
         Estado.Menu.Agregar(new Pizzas(2, "Margarita", 7.99M, Pizzas.NivelPicante.Ninguno));
         Estado.Menu.Agregar(new Pizzas(3, "Diabolo", 9.99M, Pizzas.NivelPicante.MuyPicante));
-        Estado.Menu.Agregar(new Pizzas(4, "4 Quesos", 9.99M, Pizzas.NivelPicante.Ninguno));
+        Estado.Menu.Agregar(new Pizzas(4, "4 Quesos", 11.99M, Pizzas.NivelPicante.Ninguno));
     }
     
     private string ImagenPicante(Pizzas.NivelPicante NivelPicante) => $"/{NivelPicante.ToString().ToLower()}.png";
     private void AñadirAlCarrito(Pizzas pizza) => Estado.CarritoDeCompra.AgregarALasOrdenes(pizza.PizzaId);
+    private void QuitarDelCarrito(int pos) => Estado.CarritoDeCompra.RemoverLaPosicion(pos);
+    private void Ordenar() { Console.WriteLine("Placing order"); }
 }   
